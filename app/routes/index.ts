@@ -7,14 +7,22 @@ app.use(helmet());
 app.use(cors());
 
 const router = express.Router();
+const topic0 = 'topic0';
+const service = MQTTService.getInstance();
 
 // implement calling service
-router.get('/test', (req, res, next) => {
-    const service = MQTTService.getInstance();
+router.get('/publish', (req, res, next) => {
     service
-      .publish('topic0','test')
-      .then(result => res.status(200).send(result))
-      .catch(next);
+    .publish(topic0,'test')
+    .then(result => res.status(200).send(result))
+    .catch(next);
+});
+
+router.get('/subscribe', (req, res, next) => {
+    service
+    .subscribe(topic0)
+    .then(result => res.status(200).send(result))
+    .catch(next);
 });
 
 // NOT FOUND cases
