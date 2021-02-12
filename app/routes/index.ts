@@ -1,27 +1,23 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
-import { TestService } from '../services/TestService';
+import { MQTTService } from '../services/MQTTService';
 const app = express();
 app.use(helmet());
 app.use(cors());
-// ルーティングする
+
 const router = express.Router();
 
-// routerにルーティングの動作を記述する
+// implement calling service
 router.get('/test', (req, res, next) => {
-    const service = new TestService();
+    const service = MQTTService.getInstance();
     service
-      .test()
+      .publish('topic0','test')
       .then(result => res.status(200).send(result))
       .catch(next);
 });
 
-// -------------------------------------------------
-//  以下、何のルーティングにもマッチしないorエラー
-// -------------------------------------------------
-
-// いずれのルーティングにもマッチしない(==NOT FOUND)
+// NOT FOUND cases
 app.use((req, res) => {
     res.status(404);
     res.render('error', {
@@ -32,5 +28,4 @@ app.use((req, res) => {
     });
 });
 
-//routerをモジュールとして扱う準備
 module.exports = router;
